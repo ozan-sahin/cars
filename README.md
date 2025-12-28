@@ -155,5 +155,3 @@ M.Sc. Power Engineering (TUM)
 B.Sc. Mechanical Engineering (ITU)
 
 ---
-
-Just tell me 👍
