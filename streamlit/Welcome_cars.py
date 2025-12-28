@@ -14,6 +14,14 @@ option = st.sidebar.selectbox(
     ["Autoscout24", "Kleinanzeigen"]
 )
 
+conn = st.connection("gsheets_autoscout24", type=GSheetsConnection)
+
+@st.cache_data()
+def load_data():
+    return conn.read()
+
+df = load_data()
+
 @st.cache_data
 def load_data_autoscout(path):
     df = pd.read_csv(path, sep=";", encoding='utf-8-sig')
@@ -302,5 +310,6 @@ st.dataframe(df[mask].reset_index(drop=True), use_container_width=True, hide_ind
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
                             "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
+
 
 
