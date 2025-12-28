@@ -1,0 +1,8 @@
+streamlit>=1.28
+pandas
+numpy==1.26.4
+plotly
+matplotlib
+streamlit_folium
+datetime
+st-gsheets-connection
