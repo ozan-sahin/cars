@@ -6,3 +6,4 @@ matplotlib
 streamlit_folium
 datetime
 st-gsheets-connection
+scipy
