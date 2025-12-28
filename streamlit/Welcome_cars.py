@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from scipy.optimize import curve_fit
+from streamlit_gsheets import GSheetsConnection
 
 st.set_page_config(page_title="Used Car Price Dashboard", layout="wide")
 
@@ -76,7 +77,10 @@ def resale_value(fit_result, purchase_age, purchase_price, sell_age):
 st.title("🚗 Used Car Analysis")
 
 if option == "Autoscout24":
-    df = load_data_autoscout("dataset2.csv")
+    conn = st.connection("gsheets_autoscout24", type=GSheetsConnection)
+    @st.cache_data()
+    df = conn.read()
+    # df = load_data_autoscout("dataset2.csv")
 elif option == "Kleinanzeigen":
     df = load_data_kleinanzeigen("kleinanzeigen_cleaned.csv")
 
@@ -298,4 +302,5 @@ st.dataframe(df[mask].reset_index(drop=True), use_container_width=True, hide_ind
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
                             "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
+
 
