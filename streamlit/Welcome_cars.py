@@ -14,13 +14,11 @@ option = st.sidebar.selectbox(
     ["Autoscout24", "Kleinanzeigen"]
 )
 
-conn = st.connection("gsheets_autoscout24", type=GSheetsConnection)
+# conn = st.connection("gsheets_autoscout24", type=GSheetsConnection)
 
-@st.cache_data()
-def load_data():
-    return conn.read()
-
-df = load_data()
+# @st.cache_data()
+# def load_data():
+#     return conn.read()
 
 @st.cache_data
 def load_data_autoscout(path):
@@ -73,24 +71,27 @@ def fit_exponential_fair_price(df, brand, model, distance, engine_power=None, ma
     x = np.linspace(0, max_age, 200)
     return {"ages_raw": np.array(ages), "prices_raw": np.array(prices), "age_fitted": x, "price_fitted": exp_fn(x, *popt), "params": {"a": popt[0], "b": popt[1]}}
 
-def resale_value(fit_result, purchase_age, purchase_price, sell_age):
-    if fit_result is None or purchase_price <= 0 or sell_age <= purchase_age:
-        return None
-    # a = fit_result['params']['a']
+def resale_value(fit_result, sell_age):
+    if fit_result is None:
+        return 0
+    a = fit_result['params']['a']
     b = fit_result['params']['b']
     # Relative depreciation
-    price_ratio = np.exp(-b * (sell_age - purchase_age))
-    return round(purchase_price * price_ratio)
+    reduction_factor = 0.0
+    price = a * np.exp(-b * (sell_age))
+    return round(price * (1 - reduction_factor))
 
 st.title("🚗 Used Car Analysis")
 
 if option == "Autoscout24":
     conn = st.connection("gsheets_autoscout24", type=GSheetsConnection)
-    @st.cache_data()
     df = conn.read()
     # df = load_data_autoscout("dataset2.csv")
+
 elif option == "Kleinanzeigen":
-    df = load_data_kleinanzeigen("kleinanzeigen_cleaned.csv")
+    conn = st.connection("gsheets_kleinanzeigen", type=GSheetsConnection)
+    df = conn.read()
+    # df = load_data_kleinanzeigen("kleinanzeigen_cleaned.csv")
 
 df = clean_data(df)
 
@@ -98,13 +99,13 @@ HAS_POWER = "transmission_kw" in df.columns
 # ------------------ EDA ------------------
 
 c1, c2, c3, c4, c5, c6, c7 = st.columns(7)
-c1.metric("Listings", len(df),border=True)
-c2.metric("Avg Price (€)", int(df.price.mean()),border=True)
-c3.metric("Median Age", int(df.age.median()),border=True)
-c4.metric("Median Distance (km)", int(df.distance.median()),border=True)
-c5.metric("Avg Engine Power (kW)", int(df.transmission_kw.mean()) if HAS_POWER else "N/A",border=True)
-c6.metric("Brands", df.brand.nunique(),border=True)
-c7.metric("City with most cars on sale", df.seller_city.value_counts().idxmax(),border=True)
+c1.metric("Listings", len(df))
+c2.metric("Avg Price (€)", int(df.price.mean()))
+c3.metric("Median Age", int(df.age.median()))
+c4.metric("Median Distance (km)", int(df.distance.median()))
+c5.metric("Avg Engine Power (kW)", int(df.transmission_kw.mean()) if HAS_POWER else "N/A")
+c6.metric("Brands", df.brand.nunique())
+c7.metric("City with most cars on sale", df.seller_city.value_counts().idxmax())
 
 
 c1, c2, c3, c4 = st.columns([1,1,1,3])
@@ -182,22 +183,24 @@ with c1:
     model_2 = st.selectbox("Model", models_2, key="model_selector")
     time = st.slider("Years of usage (years)", 0, int(df.age.max()), 5, key="time_2")
     distance_2 = st.slider("Max Distance (km)", 0, int(df.distance.max()), 300_000, step=10_000, key="distance_2")
-    leasing_price = st.number_input("Leasing Price (€/month)", min_value=0, value=400, key="leasing_price")
-    period = st.selectbox("Period", ["Month", "Year"], key="cost_period", width=150)
+    leasing_price = st.number_input("Leasing Price (€/month)", min_value=0, value=509, key="leasing_price")
+    period = st.selectbox("Period", ["Month", "Year"], key="cost_period")
 
 with c2:
-    insurance = st.number_input("Annual Insurance (€/year)", min_value=0, value=100, key="insurance")
+    insurance = st.number_input("Annual Insurance (€/year)", min_value=0, value=1000, key="insurance")
     tax = st.number_input("Annual Tax (€/year)", min_value=0, value=150, key="tax")
     fuel = st.number_input("Annual Fuel Cost (€/year)", min_value=0, value=1500, key="fuel")
-    maintenance = st.number_input("Annual Maintenance (€/year)", min_value=0, value=200, key="maintenance")
-    initial_buy = st.number_input("Initial Buy Price (€)", min_value=0, value=20000, key="initial_buy")
+    maintenance = st.number_input("Annual Maintenance (€/year)", min_value=0, value=600, key="maintenance")
+    initial_buy = st.number_input("Buy Price (€)", min_value=0, value=20000, key="initial_buy")
     age_of_purchase = st.number_input("Age at Purchase (years)", min_value=0, max_value=int(df.age.max()), value=3, key="age_of_purchase")
+    anzahlung = st.number_input("Tilgung (€)", min_value=0.0, value= 0.2 * initial_buy, key="down_payment")
+    zinsen = st.number_input("Zinsen Jahrlich (%)", min_value=0.0, value=6.5, key="interest_rate")
 
 # Compute fit
-result = fit_exponential_fair_price(df, brand_2, model_2, distance_2, engine_power=None)
+result = fit_exponential_fair_price(df, brand_2, model_2, distance_2, engine_power=engine_power if HAS_POWER else None)
 # a = result['params']['a']
 # b = result['params']['b']
-
+# st.write(a , b)
 if result:
     fig = go.Figure()
     # Raw points
@@ -216,6 +219,22 @@ else:
 # Monthly Cost Breakdown
 time_range = np.arange(1, time * 12 + 1) #months
 
+loan_amount = initial_buy - anzahlung
+months = time * 12
+monthly_rate = zinsen / 12 / 100
+monthly_loan_payment = (loan_amount * (monthly_rate * (1 + monthly_rate) ** months) / ((1 + monthly_rate) ** months - 1)) if loan_amount > 0 else 0
+
+balance = loan_amount
+interest_payments = []
+principal_payments = []
+
+for m in range(1, months + 1):
+    interest_payment = balance * monthly_rate
+    principal_payment = monthly_loan_payment - interest_payment
+    balance -= principal_payment
+    interest_payments.append(interest_payment)
+    principal_payments.append(principal_payment)
+
 df_costs_leasing = pd.DataFrame({
     "Month": time_range,
     "Leasing": leasing_price,
@@ -227,6 +246,8 @@ df_costs_leasing = pd.DataFrame({
 
 df_costs_buying = pd.DataFrame({
     "Month": time_range,
+    "Zinsen" : interest_payments,
+    "Tilgung": principal_payments,
     "Insurance": insurance / 12,
     "Tax": tax / 12,
     "Fuel": fuel / 12,
@@ -241,8 +262,11 @@ if period == "Year":
     df_costs_buying["Year"] = ((df_costs_buying["Month"]-1)//12)+1
     df_costs_buying = df_costs_buying.groupby("Year").sum().reset_index()  # Month column is gone now
 
-df_costs_buying.loc[0, "Initial_Buy"] = initial_buy  # Add initial buy cost to first month
-df_costs_buying["Initial_Buy"].iloc[-1] =  -1 * resale_value(result, age_of_purchase, initial_buy, age_of_purchase + time) # Sell car at the end of period for X €
+df_costs_buying.loc[0, "Initial_Buy"] = 0  # Add initial buy cost to first month
+# p = fair_price(df, brand_2, model_2, age_of_purchase, distance_2, engine_power if HAS_POWER else None)
+# df_costs_buying["Initial_Buy"].iloc[-1] = -p
+df_costs_buying["Initial_Buy"].iloc[-1] =  -1 * resale_value(result, age_of_purchase + time) # Sell car at the end of period for X €
+df_costs_buying.loc[0, "Down_Payment"] = anzahlung
 
 df_costs_leasing["Total"] = df_costs_leasing.drop(columns=df_costs_leasing.columns[0]).sum(axis=1)
 df_costs_leasing["Total"] = df_costs_leasing["Total"].cumsum().round(2)
@@ -265,8 +289,8 @@ with c4:
     else:
         st.success(f"Buying is cheaper by {leasing_cost - buying_cost:,.0f} € over {time} years")
     
-    st.write(f"**Resale Value after {time} years:** {resale_value(result, age_of_purchase, initial_buy, age_of_purchase + time):,.0f} €"
-             if resale_value(result, age_of_purchase, initial_buy, age_of_purchase + time) is not None else "**Resale Value after {time} years:** N/A")
+    st.write(f"**Resale Value after {time} years:** {resale_value(result, age_of_purchase + time):,.0f} €"
+             if resale_value(result, age_of_purchase + time) is not None else "**Resale Value after {time} years:** N/A")
 
 
 c1, c2 = st.columns(2)
@@ -285,7 +309,7 @@ with c1:
 
 with c2:
     fig = go.Figure()
-    for col in ["Initial_Buy", "Fuel","Insurance","Tax","Maintenance"]:
+    for col in [ "Fuel","Insurance","Tax","Maintenance", "Down_Payment", "Zinsen", "Tilgung"]:
         fig.add_bar(x=df_costs_buying[period], y=df_costs_buying[col], name=col)
     fig.add_scatter(x=df_costs_buying[df_costs_buying.columns[0]], y=df_costs_buying["Total"], mode="lines+markers",
                     name="Total", line=dict(color="orange",width=2), yaxis="y2")
@@ -293,6 +317,8 @@ with c2:
                       yaxis_title="Cost Components (€)", yaxis2=dict(title="Total Cost (€)", overlaying="y", side="right", range=[0, 50000], showgrid=False), width=800, height=500)
     st.plotly_chart(fig,use_container_width=True)
 
+# st.dataframe(df_costs_leasing, use_container_width=True)
+# st.dataframe(df_costs_buying, use_container_width=True)
 
 # ------------------ Filtered Listings ------------------
 st.header("Filtered Listings")
@@ -310,6 +336,5 @@ st.dataframe(df[mask].reset_index(drop=True), use_container_width=True, hide_ind
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
                             "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
-
 
 
