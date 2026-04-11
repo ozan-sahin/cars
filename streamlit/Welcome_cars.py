@@ -187,7 +187,7 @@ with c1:
     model_2 = st.selectbox("Model", models_2, key="model_selector")
     time = st.slider("Years of usage (years)", 0, int(df.age.max()), 5, key="time_2")
     distance_2 = st.slider("Max Distance (km)", 0, int(df.distance.max()), 300_000, step=10_000, key="distance_2")
-    leasing_price = st.number_input("Leasing Price (€/month)", min_value=0, value=509, key="leasing_price")
+    leasing_price = st.number_input("Leasing Price (€/month)", min_value=0, value=639, key="leasing_price")
     period = st.selectbox("Period", ["Month", "Year"], key="cost_period")
 
 with c2:
@@ -197,7 +197,7 @@ with c2:
     maintenance = st.number_input("Annual Maintenance (€/year)", min_value=0, value=600, key="maintenance")
     initial_buy = st.number_input("Buy Price (€)", min_value=0, value=35000, key="initial_buy")
     age_of_purchase = st.number_input("Age at Purchase (years)", min_value=0, max_value=int(df.age.max()), value=1, key="age_of_purchase")
-    anzahlung = st.number_input("Tilgung (€)", min_value=0.0, value= 0.2 * initial_buy, key="down_payment")
+    anzahlung = st.number_input("Tilgung (€)", min_value=0.0, value= 0.45 * initial_buy, key="down_payment")
     zinsen = st.number_input("Zinsen Jahrlich (%)", min_value=0.0, value=4.99, key="interest_rate")
 
 # Compute fit
