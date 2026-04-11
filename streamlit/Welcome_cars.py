@@ -347,6 +347,7 @@ mask = (
 if HAS_POWER:
     mask &= df.transmission_kw <= engine_power
 
+df["url"] = "https://www.autoscout24.de" + df["url"]
 st.dataframe(df[mask].reset_index(drop=True), use_container_width=True, hide_index=True,
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
