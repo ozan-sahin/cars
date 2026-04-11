@@ -185,7 +185,7 @@ with c1:
     else:
         models_2 = sorted(df[df.brand == brand_2].model.dropna().unique())
     model_2 = st.selectbox("Model", models_2, key="model_selector")
-    time = st.slider("Years of usage (years)", 0, int(df.age.max()), 5, key="time_2")
+    time = st.slider("Years of usage (years)", 0, int(df.age.max()), 6, key="time_2")
     distance_2 = st.slider("Max Distance (km)", 0, int(df.distance.max()), 15_000, step=10_000, key="distance_2")
     leasing_price = st.number_input("Leasing Price (€/month)", min_value=0, value=639, key="leasing_price")
     period = st.selectbox("Period", ["Month", "Year"], key="cost_period")
@@ -307,7 +307,7 @@ with c1:
     fig.add_scatter(x=df_costs_leasing[df_costs_leasing.columns[0]], y=df_costs_leasing["Total"], mode="lines+markers",
                     name="Total", line=dict(color="orange",width=2), yaxis="y2")
     fig.update_layout(barmode="stack", title=f"{period}ly Cost Breakdown of {brand_2}-{model_2} for Leasing at {leasing_price} €/month", xaxis_title=period, legend=dict(orientation="h", y=1.15, x=0),
-                      yaxis_title="Cost Components (€)", yaxis2=dict(title="Total Cost (€)", overlaying="y", side="right", range=[0, 50000], showgrid=False), width=800, height=500)
+                      yaxis_title="Cost Components (€)", yaxis2=dict(title="Total Cost (€)", overlaying="y", side="right", autorange=True, showgrid=False), width=800, height=500)
     st.plotly_chart(fig,use_container_width=True)
 
 
