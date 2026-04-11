@@ -242,7 +242,7 @@ for m in range(1, months + 1):
 df_costs_leasing = pd.DataFrame({
     "Month": time_range,
     "Leasing": leasing_price,
-    "Insurance": insurance / 12,
+    # "Insurance": insurance / 12,
     "Tax": tax / 12,
     "Fuel": fuel / 12,
     "Maintenance": maintenance / 12
