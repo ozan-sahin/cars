@@ -177,7 +177,9 @@ with c4:
 c1, c2, c3, c4 = st.columns([1,1,2,1])
 
 with c1:
-    brand_2 = st.selectbox("Brand", sorted(df.brand.unique()), key="brand_selector")
+    brands = sorted(df.brand.unique())
+    default = next((i for i, b in enumerate(brands) if "mercedes" in b.lower()), 0)
+    brand_2 = st.selectbox("Brand", brands, index=default, key="brand_selector")
     if not brand_2:
         models_2 = sorted(df.model.unique())
     else:
@@ -189,14 +191,14 @@ with c1:
     period = st.selectbox("Period", ["Month", "Year"], key="cost_period")
 
 with c2:
-    insurance = st.number_input("Annual Insurance (€/year)", min_value=0, value=1000, key="insurance")
+    insurance = st.number_input("Annual Insurance (€/year)", min_value=0, value=2000, key="insurance")
     tax = st.number_input("Annual Tax (€/year)", min_value=0, value=150, key="tax")
     fuel = st.number_input("Annual Fuel Cost (€/year)", min_value=0, value=1500, key="fuel")
     maintenance = st.number_input("Annual Maintenance (€/year)", min_value=0, value=600, key="maintenance")
-    initial_buy = st.number_input("Buy Price (€)", min_value=0, value=20000, key="initial_buy")
-    age_of_purchase = st.number_input("Age at Purchase (years)", min_value=0, max_value=int(df.age.max()), value=3, key="age_of_purchase")
+    initial_buy = st.number_input("Buy Price (€)", min_value=0, value=35000, key="initial_buy")
+    age_of_purchase = st.number_input("Age at Purchase (years)", min_value=0, max_value=int(df.age.max()), value=1, key="age_of_purchase")
     anzahlung = st.number_input("Tilgung (€)", min_value=0.0, value= 0.2 * initial_buy, key="down_payment")
-    zinsen = st.number_input("Zinsen Jahrlich (%)", min_value=0.0, value=6.5, key="interest_rate")
+    zinsen = st.number_input("Zinsen Jahrlich (%)", min_value=0.0, value=4.99, key="interest_rate")
 
 # Compute fit
 result = fit_exponential_fair_price(df, brand_2, model_2, distance_2, engine_power=engine_power if HAS_POWER else None)
