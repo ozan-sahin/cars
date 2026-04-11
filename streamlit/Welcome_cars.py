@@ -318,7 +318,7 @@ with c1:
     fig.add_scatter(x=df_costs_leasing[df_costs_leasing.columns[0]], y=df_costs_leasing["Total"], mode="lines+markers",
                     name="Total", line=dict(color="orange",width=2), yaxis="y2")
     fig.update_layout(barmode="stack", title=f"{period}ly Cost Breakdown of {brand_2}-{model_2} for Leasing at {leasing_price} €/month", xaxis_title=period, legend=dict(orientation="h", y=1.15, x=0),
-                      yaxis_title="Cost Components (€)", yaxis2=dict(title="Total Cost (€)", overlaying="y", side="right", autorange=True, showgrid=False), marker_color=color_map[col], width=800, height=500)
+                      yaxis_title="Cost Components (€)", yaxis2=dict(title="Total Cost (€)", overlaying="y", side="right", autorange=True, showgrid=False),  marker=dict(color=color_map[col]), width=800, height=500)
     st.plotly_chart(fig,use_container_width=True)
 
 
@@ -329,7 +329,7 @@ with c2:
     fig.add_scatter(x=df_costs_buying[df_costs_buying.columns[0]], y=df_costs_buying["Total"], mode="lines+markers",
                     name="Total", line=dict(color="orange",width=2), yaxis="y2")
     fig.update_layout(barmode="stack", title=f"{period}ly Cost Breakdown of {brand_2}-{model_2} for Buying at {initial_buy} € initial buy", xaxis_title=period, legend=dict(orientation="h", y=1.15, x=0),
-                      yaxis_title="Cost Components (€)", yaxis2=dict(title="Total Cost (€)", overlaying="y", side="right", autorange=True, showgrid=False), marker_color=color_map[col], width=800, height=500)
+                      yaxis_title="Cost Components (€)", yaxis2=dict(title="Total Cost (€)", overlaying="y", side="right", autorange=True, showgrid=False),  marker=dict(color=color_map[col]), width=800, height=500)
     st.plotly_chart(fig,use_container_width=True)
 
 # st.dataframe(df_costs_leasing, use_container_width=True)
