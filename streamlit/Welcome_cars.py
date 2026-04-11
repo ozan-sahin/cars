@@ -129,7 +129,9 @@ with c3:
     # ------------------ Fair Price Tool ------------------
     st.header("Fair Price Estimator")
 
-    brand = st.selectbox("Brand", sorted(df.brand.unique()), key="brand_main")
+    brands = sorted(df.brand.unique())
+    default = next((i for i, b in enumerate(brands) if "mercedes" in b.lower()), 0)
+    brand = st.selectbox("Brand", brands, index=default, key="brand_main")
     if not brand:
         models = sorted(df.model.unique())
     else:
