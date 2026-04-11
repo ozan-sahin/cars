@@ -186,7 +186,7 @@ with c1:
         models_2 = sorted(df[df.brand == brand_2].model.dropna().unique())
     model_2 = st.selectbox("Model", models_2, key="model_selector")
     time = st.slider("Years of usage (years)", 0, int(df.age.max()), 5, key="time_2")
-    distance_2 = st.slider("Max Distance (km)", 0, int(df.distance.max()), 300_000, step=10_000, key="distance_2")
+    distance_2 = st.slider("Max Distance (km)", 0, int(df.distance.max()), 15_000, step=10_000, key="distance_2")
     leasing_price = st.number_input("Leasing Price (€/month)", min_value=0, value=639, key="leasing_price")
     period = st.selectbox("Period", ["Month", "Year"], key="cost_period")
 
