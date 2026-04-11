@@ -313,7 +313,7 @@ color_map = {
 with c1:
 
     fig = go.Figure()
-    for col in ["Leasing", "Fuel","Insurance","Tax","Maintenance"]:
+    for col in ["Leasing", "Fuel","Tax","Maintenance"]:
         fig.add_bar(x=df_costs_leasing[period], y=df_costs_leasing[col], name=col,  marker=dict(color=color_map[col]))
     fig.add_scatter(x=df_costs_leasing[df_costs_leasing.columns[0]], y=df_costs_leasing["Total"], mode="lines+markers",
                     name="Total", line=dict(color="yellow",width=2), yaxis="y2")
