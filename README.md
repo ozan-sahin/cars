@@ -29,9 +29,7 @@ The app supports multiple datasets and provides tools for **price exploration, d
 
 * Fits an **exponential depreciation curve**:
 
-  [
-  price(age) = a \cdot e^{-b \cdot age}
-  ]
+$$price(age) = a \cdot e^{-b \cdot age}$$
 
 * Estimate:
 
