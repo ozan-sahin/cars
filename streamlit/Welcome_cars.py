@@ -145,7 +145,7 @@ with c3:
             "Max Engine Power (kW)",
             int(df.transmission_kw.min()),
             int(df.transmission_kw.max()),
-            int(df.transmission_kw.median())
+            250
         )
     else:
         st.info("ℹ️ Engine power filter not available for Kleinanzeigen data")
