@@ -188,7 +188,7 @@ with c1:
     time = st.slider("Years of usage (years)", 0, int(df.age.max()), 6, key="time_2")
     distance_2 = st.slider("Max Distance (km)", 0, int(df.distance.max()), 150_000, step=10_000, key="distance_2")
     leasing_price = st.number_input("Leasing Price (€/month)", min_value=0, value=639, key="leasing_price")
-    period = st.selectbox("Period", ["Month", "Year"], key="cost_period")
+    period = st.selectbox("Period", ["Year", "Month"], key="cost_period")
 
 with c2:
     insurance = st.number_input("Annual Insurance (€/year)", min_value=0, value=2000, key="insurance")
