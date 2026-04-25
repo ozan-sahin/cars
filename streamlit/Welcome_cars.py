@@ -27,6 +27,7 @@ def load_data_autoscout(path):
     df['model'] = df['model'].str.capitalize()
     df['url'] = 'https://www.autoscout24.de' + df['url']
     df['query_date'] = pd.to_datetime(df['query_date'])
+    df['first_registration'] = pd.to_datetime(df['first_registration'], errors="coerce")
     return df
 
 @st.cache_data
