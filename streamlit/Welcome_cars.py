@@ -363,7 +363,7 @@ with column22:
         models = sorted(df.model.unique())
     else:
         models = sorted(df[df.brand == brand].model.dropna().unique())
-    model = st.selectbox("Model", models, key="model_secondary")
+    model = st.multiselect("Model", models, key="model_secondary")
 
 with column33:
 
