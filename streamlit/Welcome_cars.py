@@ -90,7 +90,6 @@ if option == "Autoscout24":
     conn = st.connection("gsheets_autoscout24", type=GSheetsConnection)
     df = conn.read()
     df['query_date'] = pd.to_datetime(df['query_date'])
-    df['first_registration'] = pd.to_datetime(df['first_registration'], errors="coerce")
     # df = load_data_autoscout("dataset2.csv")
 
 elif option == "Kleinanzeigen":
