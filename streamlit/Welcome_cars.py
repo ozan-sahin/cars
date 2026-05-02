@@ -394,8 +394,8 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
 # if HAS_POWER:
 #     mask &= df.transmission_kw <= engine_power
 
-columns_to_display = ["image", "url", "price", "first_registration", "distance", "fuel_type", \
-                    "transmission_kw", "seller_city", "brand", "model", "age", "query_date"]
+columns_to_display = ["image", "url", "price", "first_registration", "age", "distance", "fuel_type", \
+                    "transmission_kw", "seller_city", "brand", "model", "query_date"]
 
 st.dataframe(df_query[columns_to_display].reset_index(drop=True), use_container_width=True, hide_index=True,
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
