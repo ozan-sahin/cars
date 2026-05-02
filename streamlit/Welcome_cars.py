@@ -94,11 +94,10 @@ if option == "Autoscout24":
     de_months = {
         "Mrz": "Mar", "Mai": "May", "Okt": "Oct", "Dez": "Dec"
     }  # only the ones that differ from English
-    
-    df['first_registration'] = pd.to_datetime(
-        df['first_registration'].astype(str).replace(de_months, regex=True),
-        format="%b %y"
-    )
+    df['first_registration'] = df['first_registration'].astype(str).replace(de_months, regex=True)
+    # Drop rows where Sheets couldn't resolve the value
+    df = df[~df['first_registration'].str.contains(r'#', na=False)]
+    df['first_registration'] = pd.to_datetime(df['first_registration'], format="%b %y")
     # df = load_data_autoscout("dataset2.csv")
 
 elif option == "Kleinanzeigen":
