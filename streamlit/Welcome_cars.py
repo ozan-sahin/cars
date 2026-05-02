@@ -358,13 +358,12 @@ with column11:
 with column22:
     brands = sorted(df.brand.unique())
     default = next((i for i, b in enumerate(brands) if "mercedes" in b.lower()), 0)
-    brand = st.selectbox("Brand", brands, index=default, key="brand_main")
+    brand = st.selectbox("Brand", brands, index=default, key="brand_secondary")
     if not brand:
         models = sorted(df.model.unique())
     else:
         models = sorted(df[df.brand == brand].model.dropna().unique())
-    model = st.selectbox("Model", models, key="model_main")
-    age = st.slider("Age (years)", 0, int(df.age.max()), 5)
+    model = st.selectbox("Model", models, key="model_secondary")
 
 with column33:
 
