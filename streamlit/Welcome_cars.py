@@ -273,7 +273,7 @@ if period == "Year":
 df_costs_buying.loc[0, "Initial_Buy"] = 0  # Add initial buy cost to first month
 # p = fair_price(df, brand_2, model_2, age_of_purchase, distance_2, engine_power if HAS_POWER else None)
 # df_costs_buying["Initial_Buy"].iloc[-1] = -p
-df_costs_buying["Initial_Buy"].iloc[-1] =  -1 * resale_value(result, age_of_purchase + time) # Sell car at the end of period for X €
+df_costs_buying.loc[df_costs_buying.index[-1], "Initial_Buy"] = -1 * resale_value(result, age_of_purchase + time)
 df_costs_buying.loc[0, "Down_Payment"] = anzahlung
 
 df_costs_leasing["Total"] = df_costs_leasing.drop(columns=df_costs_leasing.columns[0]).sum(axis=1)
