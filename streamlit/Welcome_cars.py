@@ -91,6 +91,14 @@ if option == "Autoscout24":
     df = conn.read()
     df['query_date'] = pd.to_datetime(df['query_date'])
     df['url'] = 'https://www.autoscout24.de' + df['url']
+    de_months = {
+        "Mrz": "Mar", "Mai": "May", "Okt": "Oct", "Dez": "Dec"
+    }  # only the ones that differ from English
+    
+    df['first_registration'] = pd.to_datetime(
+        df['first_registration'].astype(str).replace(de_months, regex=True),
+        format="%b %y"
+    )
     # df = load_data_autoscout("dataset2.csv")
 
 elif option == "Kleinanzeigen":
