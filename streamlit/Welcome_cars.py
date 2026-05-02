@@ -370,14 +370,13 @@ with column44:
         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
 mask = df.query("price >= @low_price and price <= @high_price") \
-        # .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
+        .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
-# if HAS_POWER:
-#     mask &= df.transmission_kw <= engine_power
+if HAS_POWER:
+    mask &= df.transmission_kw <= engine_power
 
-st.dataframe(mask)
-# st.dataframe(mask.reset_index(drop=True), use_container_width=True, hide_index=True,
-#              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
-#                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
-#                             "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
+st.dataframe(mask.reset_index(drop=True), use_container_width=True, hide_index=True,
+             column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
+                            "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
+                            "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
 
