@@ -370,7 +370,7 @@ with column22:
         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
 df_query = df.query("price >= @low_price and price <= @high_price") \
-            # .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
+            .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
 # if HAS_POWER:
 #     mask &= df.transmission_kw <= engine_power
