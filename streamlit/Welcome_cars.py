@@ -342,7 +342,7 @@ with c2:
 # ------------------ Filtered Listings ------------------
 st.header("Filtered Listings")
 
-column11, column22, column33, column44 = st.columns([2, 2, 2, 2])
+column11, column22 = st.columns([2, 2])
 column5, column6, column7, column8, column9= st.columns([2, 2, 2, 2, 2])
 
 with column11:
@@ -354,7 +354,7 @@ with column11:
         high_price = df.price.max()
         low_price = df.price.min()
         
-with column44:
+with column22:
 
     date_options = ["Today", "Last Week", "Last Month", "All Time"]
     date_to_select = st.selectbox("Date Range", date_options)
@@ -374,8 +374,8 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
 # if HAS_POWER:
 #     mask &= df.transmission_kw <= engine_power
 
-st.dataframe(df_query.reset_index(drop=True), use_container_width=True, hide_index=True,
-             column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
-                            "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
-                            "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
+# st.dataframe(df_query.reset_index(drop=True), use_container_width=True, hide_index=True,
+#              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
+#                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
+#                             "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
 
