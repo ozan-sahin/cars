@@ -339,24 +339,41 @@ with c2:
 
 # ------------------ Filtered Listings ------------------
 st.header("Filtered Listings")
-mask = (
-    (df.brand == brand) &
-    (df.model == model) &
-    (df.age == age) &
-    (df.distance <= distance)
-)
+
+column11, column22, column33, column44 = st.columns([2, 2, 2, 2])
+column5, column6, column7, column8, column9= st.columns([2, 2, 2, 2, 2])
+
+with column11:
+    low_price, high_price = st.slider('Price Range', min_value=0, max_value=100000, value=(0, 20000), format="%.0f")
+
+    all_price_options = st.checkbox("Select whole price range", value=False)
+
+    if all_price_options:
+        high_price = df.price.max()
+        low_price = df.price.min()
+        
+with column9:
+
+    date_options = ["Today", "Last Week", "Last Month", "All Time"]
+    date_to_select = st.selectbox("Date Range", date_options)
+
+    if date_to_select == "Today":
+        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+    elif date_to_select == "Last Week":
+        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+    elif date_to_select == "Last Month":
+        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+    else:
+        dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
+
+mask = df.query("price >= @low_price and price <= @high_price") \
+        .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
 if HAS_POWER:
     mask &= df.transmission_kw <= engine_power
 
-df["url"] = "https://www.autoscout24.de" + df["url"]
 st.dataframe(df[mask].reset_index(drop=True), use_container_width=True, hide_index=True,
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
-                            "first_registration" : st.column_config.DateColumn('📅first_registration',format="MM.YYYY"),
                             "age": st.column_config.NumberColumn("Age (years)", format="%.0f"), "url": st.column_config.LinkColumn("Link", width="small")})
-
-
-
-
 
