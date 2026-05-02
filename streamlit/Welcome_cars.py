@@ -355,19 +355,19 @@ with column11:
         high_price = df.price.max()
         low_price = df.price.min()
         
-# with column22:
+with column22:
 
-#     date_options = ["Today", "Last Week", "Last Month", "All Time"]
-#     date_to_select = st.selectbox("Date Range", date_options)
+    date_options = ["Today", "Last Week", "Last Month", "All Time"]
+    date_to_select = st.selectbox("Date Range", date_options)
 
-#     if date_to_select == "Today":
-#         dates = [datetime.date.today().strftime('%Y-%m-%d')]
-#     elif date_to_select == "Last Week":
-#         dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
-#     elif date_to_select == "Last Month":
-#         dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
-#     else:
-#         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
+    if date_to_select == "Today":
+        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+    elif date_to_select == "Last Week":
+        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+    elif date_to_select == "Last Month":
+        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+    else:
+        dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
 df_query = df.query("price >= @low_price and price <= @high_price") \
             # .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
