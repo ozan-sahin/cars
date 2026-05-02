@@ -97,7 +97,7 @@ if option == "Autoscout24":
     df['first_registration'] = df['first_registration'].astype(str).replace(de_months, regex=True)
     # Drop rows where Sheets couldn't resolve the value
     df = df[~df['first_registration'].str.contains(r'#', na=False)]
-    df['first_registration'] = pd.to_datetime(df['first_registration'], format="%M %y")
+    df['first_registration'] = pd.to_datetime(df['first_registration'], format='mixed', dayfirst=False)
     # df = load_data_autoscout("dataset2.csv")
 
 elif option == "Kleinanzeigen":
