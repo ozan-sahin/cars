@@ -382,7 +382,7 @@ with column33:
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates") \
             .query("brand == @brand") \
-            .query("model in @models")
+            .query("model in @model")
 
 # if HAS_POWER:
 #     mask &= df.transmission_kw <= engine_power
