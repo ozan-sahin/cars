@@ -407,7 +407,7 @@ mask = (
     (df["model"].isin(model))
 )
 
-if option == "Kleinanzeigen"::
+if HAS_POWER :
     mask &= (df.transmission_kw <= engine_power)
     
 if option == "Autoscout24":
