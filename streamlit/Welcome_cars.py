@@ -115,6 +115,7 @@ elif option == "mobile.de":
 df = clean_data(df)
 
 HAS_POWER = "transmission_kw" in df.columns
+HAS_CITY = "seller_city" in df.columns
 # ------------------ EDA ------------------
 
 c1, c2, c3, c4, c5, c6, c7 = st.columns(7)
@@ -124,8 +125,7 @@ c3.metric("Median Age", int(df.age.median()))
 c4.metric("Median Distance (km)", int(df.distance.median()))
 c5.metric("Avg Engine Power (kW)", int(df.transmission_kw.mean()) if HAS_POWER else "N/A")
 c6.metric("Brands", df.brand.nunique())
-# c7.metric("City with most cars on sale", df.seller_city.value_counts().idxmax())
-
+c7.metric("City with most cars on sale", df.seller_city.value_counts().idxmax() if HAS_CITY else "N/A")
 
 c1, c2, c3, c4 = st.columns([1,1,1,3])
 
@@ -398,13 +398,24 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("brand == @brand") \
             .query("model in @model")
 
-# if HAS_POWER:
-#     mask &= df.transmission_kw <= engine_power
+mask = (
+    (df["price"] >= low_price) & (df["price"] <= high_price) &
+    (df["query_date"].dt.strftime('%Y-%m-%d').isin(dates)) &
+    (df["brand"] == brand) &
+    (df["model"].isin(model))
+)
 
-columns_to_display = ["image", "url", "price", "first_registration", "age", "distance", "fuel_type", \
-                    "transmission_kw", "seller_city", "brand", "model", "query_date"]
+if HAS_POWER:
+    mask &= (df.transmission_kw <= engine_power)
+    
+if HAS_CITY:
+    columns_to_display = ["image", "url", "price", "first_registration", "age", "distance", "fuel_type", \
+                        "transmission_kw", "seller_city", "brand", "model", "query_date"]
+else:
+    columns_to_display = ["image", "url", "price", "first_registration", "age", "distance", "fuel_type", \
+                        "transmission_kw", "brand", "model", "query_date"]
 
-st.dataframe(df_query[columns_to_display].reset_index(drop=True), use_container_width=True, hide_index=True,
+st.dataframe(df[mask][columns_to_display].reset_index(drop=True), use_container_width=True, hide_index=True,
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
                             "age": st.column_config.NumberColumn("Age (years)", format="%.0f"),
