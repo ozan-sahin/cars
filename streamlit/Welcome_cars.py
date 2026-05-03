@@ -12,7 +12,7 @@ st.sidebar.title("Data selector")
 
 option = st.sidebar.selectbox(
     "Choose dataset",
-    ["Autoscout24", "Kleinanzeigen"]
+    ["Autoscout24", "Kleinanzeigen", "mobile.de"]
 )
 
 # conn = st.connection("gsheets_autoscout24", type=GSheetsConnection)
@@ -104,6 +104,13 @@ elif option == "Kleinanzeigen":
     conn = st.connection("gsheets_kleinanzeigen", type=GSheetsConnection)
     df = conn.read()
     # df = load_data_kleinanzeigen("kleinanzeigen_cleaned.csv")
+
+elif option == "mobile.de":
+    conn = st.connection("gsheets_mobile", type=GSheetsConnection)
+    df = conn.read()
+    df['query_date'] = pd.to_datetime(df['query_date'])
+    df['first_registration'] = pd.to_datetime(df['first_registration'])
+    df['age'] = pd.Timestamp.now().year - df['first_registration'].dt.year
 
 df = clean_data(df)
 
