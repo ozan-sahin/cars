@@ -103,7 +103,9 @@ if option == "Autoscout24":
 elif option == "Kleinanzeigen":
     conn = st.connection("gsheets_kleinanzeigen", type=GSheetsConnection)
     df = conn.read()
-    # df = load_data_kleinanzeigen("kleinanzeigen_cleaned.csv")
+    df['query_date'] = pd.to_datetime(df['query_date'])
+    df['first_registration'] = pd.to_datetime(df['first_registration'])
+    df['age'] = pd.Timestamp.now().year - df['first_registration'].dt.year
 
 elif option == "mobile.de":
     conn = st.connection("gsheets_mobile", type=GSheetsConnection)
