@@ -124,7 +124,7 @@ c3.metric("Median Age", int(df.age.median()))
 c4.metric("Median Distance (km)", int(df.distance.median()))
 c5.metric("Avg Engine Power (kW)", int(df.transmission_kw.mean()) if HAS_POWER else "N/A")
 c6.metric("Brands", df.brand.nunique())
-c7.metric("City with most cars on sale", df.seller_city.value_counts().idxmax())
+# c7.metric("City with most cars on sale", df.seller_city.value_counts().idxmax())
 
 
 c1, c2, c3, c4 = st.columns([1,1,1,3])
