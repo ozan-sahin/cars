@@ -407,16 +407,19 @@ mask = (
     (df["model"].isin(model))
 )
 
-if HAS_POWER:
+if option == "Kleinanzeigen"::
     mask &= (df.transmission_kw <= engine_power)
     
-if HAS_CITY:
+if option == "Autoscout24":
     columns_to_display = ["image", "url", "price", "first_registration", "age", "distance", "fuel_type", \
                         "transmission_kw", "seller_city", "brand", "model", "query_date"]
-else:
+if option == "mobile.de":
     columns_to_display = ["image", "url", "price", "first_registration", "age", "distance", "fuel_type", \
                         "transmission_kw", "brand", "model", "query_date"]
-
+if option == "Kleinanzeigen":
+    columns_to_display = ["image", "url", "price", "first_registration", "age", \
+                          "distance", "brand", "model", "query_date"]
+    
 st.dataframe(df[mask][columns_to_display].reset_index(drop=True), use_container_width=True, hide_index=True,
              column_config={"image": st.column_config.ImageColumn("Image"), "price": st.column_config.NumberColumn("Price (€)", format="€ %.0f"),
                             "distance": st.column_config.NumberColumn("Distance (km)", format="%.0f km"),
