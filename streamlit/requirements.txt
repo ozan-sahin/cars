@@ -3,6 +3,5 @@ pandas
 numpy==1.26.4
 plotly
 matplotlib
-datetime
 st-gsheets-connection
 scipy
